@@ -2,65 +2,202 @@
 <html>
 <head>
     <title>Guest Book 😎</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --accent: #00ffcc;
+            --accent-dim: rgba(0,255,204,0.15);
+            --bg: #0d0d0d;
+            --surface: #181818;
+            --border: rgba(0,255,204,0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: Arial;
-            background: #111;
-            color: #eee;
+            font-family: 'Share Tech Mono', monospace;
+            background: var(--bg);
+            color: #ccc;
             text-align: center;
+            min-height: 100vh;
+            background-image:
+                radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,255,204,0.06) 0%, transparent 70%);
+        }
+
+        /* ── HEADER ── */
+        header {
+            padding: 40px 20px 0;
         }
 
         h1 {
-            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent);
+            font-size: clamp(1.4rem, 4vw, 2rem);
+            letter-spacing: 0.08em;
+            text-shadow: 0 0 24px rgba(0,255,204,0.4);
         }
 
-        input {
-            padding: 10px;
-            width: 250px;
+        /* ── VERSION BADGE ── */
+        .version-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 18px auto 0;
+            padding: 7px 16px 7px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--accent-dim);
+            backdrop-filter: blur(4px);
+        }
+
+        .version-bar .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 8px var(--accent);
+            flex-shrink: 0;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%,100% { opacity: 1; }
+            50%      { opacity: 0.35; }
+        }
+
+        .version-label {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            color: rgba(0,255,204,0.6);
+            text-transform: uppercase;
+        }
+
+        #version-input {
+            background: transparent;
             border: none;
-            border-radius: 5px;
-        }
-
-        button {
-            padding: 10px;
-            margin-left: 5px;
-            background: #00ffcc;
-            border: none;
-            cursor: pointer;
-        }
-
-        ul {
-            list-style: none;
+            outline: none;
+            color: var(--accent);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.88rem;
+            letter-spacing: 0.06em;
+            width: 120px;
             padding: 0;
         }
 
+        #version-input::placeholder { color: rgba(0,255,204,0.3); }
+
+        /* ── DIVIDER ── */
+        .divider {
+            width: 180px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin: 28px auto;
+            opacity: 0.4;
+        }
+
+        /* ── FORM ── */
+        .form-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 20px;
+        }
+
+        #text {
+            padding: 11px 16px;
+            width: 260px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--surface);
+            color: #eee;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        #text:focus { border-color: var(--accent); }
+        #text::placeholder { color: #555; }
+
+        button {
+            padding: 11px 20px;
+            background: var(--accent);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #0d0d0d;
+            letter-spacing: 0.06em;
+            transition: opacity 0.15s, box-shadow 0.15s;
+        }
+
+        button:hover {
+            opacity: 0.85;
+            box-shadow: 0 0 16px rgba(0,255,204,0.4);
+        }
+
+        /* ── NOTES ── */
+        ul {
+            list-style: none;
+            padding: 0 20px 40px;
+            margin-top: 24px;
+        }
+
         li {
-            background: #222;
+            background: var(--surface);
+            border: 1px solid rgba(255,255,255,0.05);
             margin: 10px auto;
-            padding: 10px;
-            width: 300px;
-            border-radius: 5px;
+            padding: 12px 18px;
+            width: 320px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #bbb;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-
 <body>
 
-<h1>Guest Book (Docker Edition)</h1>
+<header>
+    <h1>Guest Book · Docker Edition</h1>
 
-<input id="text" placeholder="Say something..." />
-<button onclick="addNote()">Add</button>
+    <div class="version-bar">
+        <span class="dot"></span>
+        <span class="version-label">v</span>
+        <input id="version-input" type="text" placeholder="1.0.0" maxlength="20"
+               title="Версия приложения" />
+    </div>
+</header>
+
+<div class="divider"></div>
+
+<div class="form-row">
+    <input id="text" placeholder="Say something..." />
+    <button onclick="addNote()">Add</button>
+</div>
 
 <ul id="notes"></ul>
 
 <script>
+    // Persist version across page loads
+    const vInput = document.getElementById('version-input');
+    vInput.value = localStorage.getItem('app_version') || '';
+    vInput.addEventListener('input', () => {
+        localStorage.setItem('app_version', vInput.value);
+    });
+
     async function loadNotes() {
         const res = await fetch('/notes');
         const data = await res.json();
-
         const list = document.getElementById('notes');
         list.innerHTML = '';
-
         data.forEach(n => {
             const li = document.createElement('li');
             li.innerText = n.text;
@@ -70,19 +207,16 @@
 
     async function addNote() {
         const text = document.getElementById('text').value;
-
         await fetch('/notes', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text })
         });
-
         document.getElementById('text').value = '';
         loadNotes();
     }
 
     loadNotes();
 </script>
-
 </body>
 </html>
